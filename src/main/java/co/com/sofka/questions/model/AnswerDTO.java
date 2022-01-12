@@ -2,10 +2,12 @@ package co.com.sofka.questions.model;
 
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 public class AnswerDTO {
+    private String id;
     @NotBlank
     private String userId;
     @NotBlank
@@ -14,6 +16,7 @@ public class AnswerDTO {
     private String answer;
 
     private Integer position;
+    private List<AnswerDTO> answers;
 
 
     public AnswerDTO() {
@@ -24,6 +27,22 @@ public class AnswerDTO {
         this.userId = userId;
         this.questionId = questionId;
         this.answer = answer;
+    }
+
+    public List<AnswerDTO> getAnswers() {
+        return answers;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setAnswers(List<AnswerDTO> answers) {
+        this.answers = answers;
     }
 
     public Integer getPosition() {

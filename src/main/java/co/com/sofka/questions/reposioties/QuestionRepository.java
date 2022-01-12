@@ -8,4 +8,6 @@ import reactor.core.publisher.Flux;
 @Repository
 public interface QuestionRepository extends ReactiveCrudRepository<Question, String> {
     Flux<Question> findByUserId(String userId);
+    Flux<Question> findByType(String type);
+    Flux<Question> findByCategory(String category);
 }
