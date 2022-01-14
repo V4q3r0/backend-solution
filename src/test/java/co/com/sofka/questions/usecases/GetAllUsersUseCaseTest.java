@@ -1,9 +1,6 @@
 package co.com.sofka.questions.usecases;
 
-import co.com.sofka.questions.collections.Question;
 import co.com.sofka.questions.collections.User;
-import co.com.sofka.questions.mappers.MappersUtils;
-import co.com.sofka.questions.reposioties.QuestionRepository;
 import co.com.sofka.questions.reposioties.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,23 +8,21 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import reactor.core.publisher.Mono;
+import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
-import static org.mockito.ArgumentMatchers.anyString;
-
 @SpringBootTest
-class GetUserUseCaseTest {
+class GetAllUsersUseCaseTest {
 
     @MockBean
     private UserRepository userRepository;
 
     @Autowired
-    private GetUserUseCase getUserUseCase;
+    private GetAllUsersUseCase getAllUsersUseCase;
 
     @Test
-    @DisplayName("Get User Test")
-    void getUser() {
+    @DisplayName("Get All Users Test")
+    void getAllUser(){
         var dato1 = new User();
         dato1.setId("user01");
         dato1.setName("Pepito");
@@ -35,9 +30,16 @@ class GetUserUseCaseTest {
         dato1.setPassword("12345");
         dato1.setPhotoURL("imagen.com.jpg");
 
-        Mockito.when(userRepository.findById(anyString())).thenReturn(Mono.just(dato1));
+        var dato2 = new User();
+        dato2.setId("user02");
+        dato2.setName("Juan David");
+        dato2.setEmail("estoNoExiste@gmail.com");
+        dato2.setPassword("54321");
+        dato2.setPhotoURL("imagen_perfil.com.jpg");
 
-        StepVerifier.create(getUserUseCase.apply(dato1.getId()))
+        Mockito.when(userRepository.findAll()).thenReturn(Flux.just(dato1, dato2));
+
+        StepVerifier.create(getAllUsersUseCase.get())
                 .expectNextMatches(userDTO -> {
                     assert userDTO.getId().equals(dato1.getId());
                     assert userDTO.getName().equals(dato1.getName());
@@ -45,8 +47,16 @@ class GetUserUseCaseTest {
                     assert userDTO.getPassword().equals(dato1.getPassword());
                     assert userDTO.getPhotoURL().equals(dato1.getPhotoURL());
                     return true;
-                });
-
+                })
+                .expectNextMatches(userDTO -> {
+                    assert userDTO.getId().equals(dato2.getId());
+                    assert userDTO.getName().equals(dato2.getName());
+                    assert userDTO.getEmail().equals(dato2.getEmail());
+                    assert userDTO.getPassword().equals(dato2.getPassword());
+                    assert userDTO.getPhotoURL().equals(dato2.getPhotoURL());
+                    return true;
+                })
+                .verifyComplete();
     }
 
 }

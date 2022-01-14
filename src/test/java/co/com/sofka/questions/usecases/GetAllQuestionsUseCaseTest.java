@@ -2,6 +2,7 @@ package co.com.sofka.questions.usecases;
 
 import co.com.sofka.questions.collections.Question;
 import co.com.sofka.questions.reposioties.QuestionRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,7 +23,8 @@ class GetAllQuestionsUseCaseTest {
     private GetAllQuestionsUseCase getAllQuestionsUseCase;
 
     @Test
-    void getValidationTest(){
+    @DisplayName("Get All Questions Test")
+    void getAllQuestions(){
         var question =  new Question();
         question.setUserId("xxxx-xxxx");
         question.setType("tech");

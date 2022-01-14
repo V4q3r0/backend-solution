@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 import static org.mockito.ArgumentMatchers.anyString;
 
@@ -26,9 +27,8 @@ class DeleteUserCaseUseTest {
     void deleteQuestion(){
         Mockito.when(userRepository.deleteById(anyString())).thenReturn(Mono.empty());
 
-        var resultado = deleteUserCaseUse.apply("01");
-
-        Assertions.assertEquals(null, resultado.block());
+        StepVerifier.create(deleteUserCaseUse.apply("01"))
+                .verifyComplete();
     }
 
 }

@@ -6,26 +6,32 @@ import co.com.sofka.questions.model.AnswerDTO;
 import co.com.sofka.questions.model.QuestionDTO;
 import co.com.sofka.questions.reposioties.AnswerRepository;
 import co.com.sofka.questions.reposioties.QuestionRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.util.ArrayList;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 
 @SpringBootTest
 class AddAnswerUseCaseTest {
 
     @MockBean
-    private AnswerRepository answerRepository;
     private QuestionRepository questionRepository;
+    @MockBean
+    private AnswerRepository answerRepository;
 
+    @Autowired
+    private GetQuestionUseCase getQuestionUseCase;
     @Autowired
     private AddAnswerUseCase addAnswerUseCase;
 
@@ -55,21 +61,13 @@ class AddAnswerUseCaseTest {
         dato2.setUserId("user01");
         dato2.setQuestion("¿Ejemplo de pregunta 2?");
 
-        var dato4 = new QuestionDTO();
-        dato4.setType("Nuevas tecnologias");
-        dato4.setCategory("Software");
-        dato4.setAnswers(list);
-        dato4.setUserId("user01");
-        dato4.setQuestion("¿Ejemplo de pregunta 2?");
-
-        Mockito.when(questionRepository.save(any())).thenReturn(Mono.just(dato2));
+        Mockito.when(questionRepository.findById(anyString())).thenReturn(Mono.just(dato2));
+        Mockito.when(answerRepository.findAllByQuestionId(anyString())).thenReturn(Flux.just(dato1));
         Mockito.when(answerRepository.save(any())).thenReturn(Mono.just(dato1));
-
-        questionRepository.save(dato2);
 
         StepVerifier.create(addAnswerUseCase.apply(dato3))
                 .expectNextMatches(questionDTO -> {
-                    assert questionDTO.getAnswers().get(0).getAnswer().equals("Ejemplo de respuesta");
+                    Assertions.assertEquals("Ejemplo de respuesta", questionDTO.getAnswers().get(0).getAnswer());
                     return true;
                 })
                 .verifyComplete();

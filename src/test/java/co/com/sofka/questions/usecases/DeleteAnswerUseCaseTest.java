@@ -1,5 +1,6 @@
 package co.com.sofka.questions.usecases;
 
+import co.com.sofka.questions.collections.Answer;
 import co.com.sofka.questions.reposioties.AnswerRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -22,14 +23,15 @@ class DeleteAnswerUseCaseTest {
     @Autowired
     private DeleteAnswerUseCase deleteAnswerUseCase;
 
-    /*@Test
-    @DisplayName("DeleteUseCase Test")
-    void deleteQuestion(){
-        Mockito.when(answerRepository.deleteById(anyString())).thenReturn(Mono.empty());
+    @Test
+    @DisplayName("Delete Answer Test")
+    void deleteAnswer(){
 
-        var resultado = deleteAnswerUseCase.apply("01");
+        Mockito.when(answerRepository.deleteById("01")).thenReturn(Mono.empty());
+        Mockito.when(answerRepository.deleteByQuestionId("01")).thenReturn(Mono.empty());
 
-        Assertions.assertEquals(null, resultado.block());
-    }*/
+        StepVerifier.create(deleteAnswerUseCase.apply("01"))
+                .verifyComplete();
+    }
 
 }
